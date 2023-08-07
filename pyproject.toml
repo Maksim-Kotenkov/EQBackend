@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^4.2.4"
+phonenumbers = "^8.13.18"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
+djoser = "^2.2.0"
 
 
 [build-system]
