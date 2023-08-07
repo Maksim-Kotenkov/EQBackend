@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import UserManager
 
 
-class EQUser(AbstractBaseUser):
+class User(AbstractUser):
     username = models.TextField(
         verbose_name='Никнейм',
         null=False,
@@ -69,9 +69,9 @@ class EQUser(AbstractBaseUser):
         verbose_name="Номер текущего теста"
     )
 
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
-        'email',
+        'username',
         'first_name',
         'last_name',
         'parent_name',
@@ -79,8 +79,6 @@ class EQUser(AbstractBaseUser):
         'date_of_birth',
         'phone_number',
     ]
-
-    objects = EQUserManager()
 
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.parent_name}'

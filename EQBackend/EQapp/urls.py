@@ -7,5 +7,5 @@ urlpatterns = [
     path('register/', views.signup),
     path('djoser/', include('djoser.urls')),
     path('djoser/', include('djoser.urls.jwt')),
-    path('experiment/', views.get_token)
+    path('experiment', views.combined_register)
 ]

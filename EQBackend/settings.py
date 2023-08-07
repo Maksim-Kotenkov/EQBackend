@@ -43,7 +43,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = 'EQapp.EQUser'
+AUTH_USER_MODEL = 'EQapp.User'
 ROOT_URLCONF = 'EQBackend.EQapp.urls'
 
 SIMPLE_JWT = {
