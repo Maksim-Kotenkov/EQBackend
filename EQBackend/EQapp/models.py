@@ -86,3 +86,62 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+
+class Tests(models.Model):
+    name = models.CharField(
+        max_length=200,
+        blank=False,
+        null=False,
+        unique=True,
+        verbose_name="Название теста"
+    )
+
+    type = models.CharField(
+        max_length=20,
+        default="other",
+        choices=(
+            ("initial", "Начальный/конечный"),
+            ("other", "Другой"),
+        ),
+        blank=False,
+        null=False,
+        verbose_name="Тип теста"
+    )
+
+    number = models.IntegerField(
+        blank=False,
+        null=False,
+        default=0,
+        verbose_name="Порядковый номер теста"
+    )
+
+    test_data = models.TextField(
+        default="sum: 30\n"
+                "questions:\n"
+                "  q1:\n"
+                "    text: 'Как вы относитесь к молоку?'\n"
+                "    answers:\n"
+                "      answer1:\n"
+                "        value: 7\n"
+                "        text: Нет\n"
+                "      answer2:\n"
+                "        value: 1\n"
+                "        text: Да\n",
+        null=False,
+        blank=False,
+        verbose_name="Данные теста"
+    )
+
+    counting_function = models.TextField(
+        null=False,
+        blank=False,
+        verbose_name="Функция подсчета результата",
+        default="(() => answer.reduce((sum, current) => sum + current.answer.value, 0))()"
+    )
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = 'Тест'
+        verbose_name_plural = 'Тесты'
