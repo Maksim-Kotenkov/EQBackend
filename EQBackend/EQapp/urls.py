@@ -4,8 +4,10 @@ from EQBackend.EQapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', views.signup),
     path('djoser/', include('djoser.urls')),
     path('djoser/', include('djoser.urls.jwt')),
-    path('experiment/', views.get_token)
+    path('register', views.signup),
+    path('auth', views.get_token),
+    path('tests/<int:pk>', views.TestView.as_view({'get': 'list', 'post': 'list'}))
+    #path('tests/<int:pk>', views.test_endpoint)
 ]
