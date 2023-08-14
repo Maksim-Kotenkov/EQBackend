@@ -5,12 +5,16 @@ from django.contrib.auth.models import UserManager
 
 
 class User(AbstractUser):
-    username = models.TextField(
+    username = models.CharField(
         verbose_name='Никнейм',
         null=False,
         blank=False,
         max_length=100,
         unique=True
+    )
+
+    password = models.CharField(
+        max_length=30
     )
 
     email = models.EmailField(
@@ -145,3 +149,32 @@ class Tests(models.Model):
     class Meta:
         verbose_name = 'Тест'
         verbose_name_plural = 'Тесты'
+
+
+class Answers(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='answer',
+        on_delete=models.CASCADE
+    )
+
+    testId = models.IntegerField()
+
+    answers = models.TextField(
+        default="q1:\n"
+                "  text: Вы выгорели?\n"
+                "    answer:\n"
+                "      value: 1\n"
+                "      text: Да\n",
+        null=False,
+        blank=False,
+        verbose_name="Данные ответа"
+    )
+
+    total = models.IntegerField()
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'

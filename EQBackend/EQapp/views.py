@@ -1,17 +1,18 @@
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
 import requests
 import json
 import yaml
+from yaml.loader import SafeLoader
 
-from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from django.http import HttpResponse, HttpRequest
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from EQBackend.settings import address
 from .models import Tests
+from .serializers import UserProfileSerializer, AnswerSerializer
 
 
 @csrf_exempt
@@ -41,23 +42,33 @@ def get_token(request):
 
 
 class TestView(viewsets.ModelViewSet):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        if self.request.method == 'GET':
-            test = Tests.objects.filter(pk=self.kwargs['pk'])[0]
+    def list(self, request, *args, **kwargs):
+        if request.method == 'GET':
+            test = Tests.objects.filter(pk=kwargs['pk'])[0]
             r = dict()
             r['name'] = test.name
             r['type'] = test.type
-            yml = dict()
-            yaml.load(test.test_data, yml)
+            yml = yaml.load(test.test_data, Loader=SafeLoader)
             r['test_data'] = yml
             r['counting_function'] = test.counting_function
-            return HttpResponse(r)
 
-        elif self.request.method == 'POST':
-            test = Tests.objects.filter(pk=self.kwargs['pk'])
-            return test
+            return Response(r)
+
+        elif request.method == 'POST':
+            answer = json.loads(str(self.request.body, encoding='utf-8'))
+            answer['answers'] = yaml.dump(answer['answers'])
+            answer['user'] = request.user.pk
+            serializer = AnswerSerializer(data=answer)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(
+                    serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                )
         else:
-            bad_resp = HttpResponse()
-            bad_resp.text = 'Method not allowed.'
-            return bad_resp
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

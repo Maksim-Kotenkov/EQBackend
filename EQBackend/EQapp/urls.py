@@ -8,5 +8,6 @@ urlpatterns = [
     path('djoser/', include('djoser.urls.jwt')),
     path('register', views.signup),
     path('auth', views.get_token),
-    path('tests/<int:pk>', views.TestView.as_view({'get': 'retrieve'}))
+    path('tests/<int:pk>', views.TestView.as_view({'get': 'list', 'post': 'list'}))
+    #path('tests/<int:pk>', views.test_endpoint)
 ]
